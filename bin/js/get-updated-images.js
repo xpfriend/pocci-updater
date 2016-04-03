@@ -1,0 +1,80 @@
+'use strict';
+var server = require('co-request');
+var co = require('co');
+var images = require('./version.json')
+
+
+var findLatestFrom = function*(imageName) {
+  var image = imageName.split(':');
+  var res = yield server.get({
+    url: `https://registry.hub.docker.com/v2/repositories/${image[0]}/dockerfile/`,
+    json: true
+  });
+  var contents = res.body.contents.split('\n');
+  for(var i = 0; i < contents.length; i++) {
+    if(contents[i].startsWith('FROM ')) {
+      return yield findLatest(contents[i].split(' ')[1]);
+    }
+  }
+  return null;
+};
+
+var findLatest = function*(imageName) {
+  var image = imageName.split(':');
+  if(image[1] === 'latest') {
+    return null;
+  }
+  var name = image[0];
+  if(name.indexOf('/') == -1) {
+    name = 'library/' + name;
+  }
+
+  var next = `https://registry.hub.docker.com/v2/repositories/${name}/tags/`;
+  var results = [];
+  while(next) {
+    var res = yield server.get({
+      url: next,
+      json: true
+    });
+    var body = res.body;
+    results = results.concat(body.results);
+    next = body.next;
+  }
+  var maxId = 0;
+  var tag;
+  for(var i = 0; i < results.length; i++) {
+    var result = results[i];
+    if(result.name !== 'latest' && 
+        (result.name.indexOf('beta') == -1) &&
+        (name !== 'library/java' || (result.name.startsWith('openjdk-8u') && result.name.endsWith('-jdk'))) &&
+        (name !== 'library/nginx' || (!result.name.startsWith('1.8') && result.name.match(/^[0-9]/))) &&
+        result.id > maxId) {
+      maxId = result.id;
+      tag = result.name;
+    }
+  }
+
+  var latest = `${name}:${tag}`;
+  if(latest !== `${name}:${image[1]}`) {
+    return latest;
+  } else {
+    return null;
+  }
+};
+
+co(function*() {
+  for(var i = 0; i < images.length; i++) {
+    var latest;
+    if(images[i].startsWith('xpfriend/')) {
+      latest = yield findLatestFrom(images[i]);
+    } else {
+      latest = yield findLatest(images[i]);
+    }
+    if(latest) {
+      console.log(`${images[i]} --> ${latest}`);
+    }
+  }
+}).catch(function(err) {
+  console.error(err);
+});
+

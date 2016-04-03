@@ -1,0 +1,9 @@
+{
+  "name": "pocci-update-checker",
+  "version": "0.0.1",
+  "license": "MIT",
+  "dependencies": {
+    "co": "^4.6.0",
+    "co-request": "^1.0.0"
+  }
+}

@@ -1,0 +1,12 @@
+# Dependency directory
+node_modules
+
+# Generated files
+output.txt
+plugins.txt
+updated-images.txt
+registered-images.txt
+version.json
+*.tmp
+
+backup/
