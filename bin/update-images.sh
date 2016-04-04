@@ -6,7 +6,7 @@ export REGISTERED_IMAGES=${BASE_DIR}/registered-images.txt
 export UPDATED_IMAGES=${BASE_DIR}/updated-images.txt
 
 get_current_version() {
-    docker images | grep $1 | head -1 | awk '{print $2}'
+    docker images | grep "xpfriend/$1" | head -1 | awk '{print $2}'
 }
 
 get_next_version() {
@@ -33,11 +33,11 @@ register_image() {
 }
 
 get_registered_image() {
-    grep $1 ${REGISTERED_IMAGES}
+    grep $1 ${REGISTERED_IMAGES} | head -1
 }
 
 get_image_name_with_tag() {
-    docker images | grep $1 | head -1 | awk '{printf "%s:%s",$1,$2}'
+    docker images | grep "xpfriend/$1" | head -1 | awk '{printf "%s:%s",$1,$2}'
 }
 
 get_newest_version_of_apt_package() {

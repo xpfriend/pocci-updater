@@ -10,3 +10,5 @@ version.json
 *.tmp
 
 backup/
+get-token.sh
+setup-git-user.sh
