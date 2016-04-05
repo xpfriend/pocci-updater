@@ -5,27 +5,7 @@ export BASE_DIR=$(cd $(dirname $0); pwd)
 export REGISTERED_IMAGES=${BASE_DIR}/registered-images.txt
 export UPDATED_IMAGES=${BASE_DIR}/updated-images.txt
 
-get_current_version() {
-    IMAGE=$1
-    cd ${BASE_DIR}/images/${IMAGE}/src.tmp
-    git describe --tags --abbrev=0 | tr -d v
-    cd ${BASE_DIR}
-}
-
-get_next_version() {
-    MAJOR=`echo "$1" | cut -d. -f1`
-    MINOR=`echo "$1" | cut -d. -f2`
-    PATCH=`echo "$1" | cut -d. -f3`
-    if [ "$2" = "p" ]; then
-        echo ${MAJOR}.${MINOR}.`expr ${PATCH} + 1`
-    else
-        echo ${MAJOR}.`expr ${MINOR} + 1`.0
-    fi
-}
-
-get_next_version_of() {
-    get_next_version $(get_current_version $1) $2
-}
+source ${BASE_DIR}/util.sh
 
 get_from_version() {
     grep $1 ${UPDATED_IMAGES} | head -1 | cut -d' ' -f3 | cut -d: -f2
@@ -72,10 +52,6 @@ get_registered_base_image_version() {
     fi
 }
 
-get_number_of_updated_files() {
-    cd `dirname $1` && git status --porcelain |wc -l
-}
-
 register_workspace_image() {
     FROM_VERSION=`get_registered_base_image_version`
 
@@ -91,40 +67,6 @@ register_workspace_image() {
     fi
 }
 
-get_greater_version_of() {
-    V_A=`echo "$2" | cut -d. -f"$1"`
-    V_B=`echo "$3" | cut -d. -f"$1"`
-
-    if [ -z "${V_A}" ]; then
-        V_A="-1"
-    fi
-
-    if [ -z "${V_B}" ]; then
-        V_B="-1"
-    fi
-
-    if [ "${V_A}" -gt "${V_B}" ]; then
-        echo "$2"
-        return
-    fi
-    if [ "${V_B}" -gt "${V_A}" ]; then
-        echo "$3"
-        return
-    fi
-}
-
-get_greater_version() {
-    for i in 1 2 3; do
-        VERSION=`get_greater_version_of $i $1 $2`
-        if [ -n "${VERSION}" ]; then
-            echo ${VERSION}
-            return
-        fi
-    done
-
-    echo $1
-}
-
 show_status() {
     for i in `cat ${REGISTERED_IMAGES}`; do
         echo "=============================="
@@ -137,15 +79,24 @@ show_status() {
     done
 }
 
-handle_error() {
-    if [ ${PIPESTATUS[0]} -ne 0 ]; then
-        exit 1
-    fi
+print_target() {
+    VERSION=`get_current_version $1`
+    echo '"xpfriend/'$1:${VERSION}'"'$2
 }
 
-export -f get_next_version_of
-export -f get_current_version
-export -f get_next_version
+print_targets() {
+    echo "["
+    print_target workspace-base ","
+    print_target workspace-java ","
+    print_target workspace-nodejs ","
+    print_target workspace-python27 ","
+    print_target pocci-account-center ","
+    print_target fluentd ","
+    print_target jenkins ","
+    print_target sonarqube
+    echo "]"
+}
+
 export -f get_from_version
 export -f register_image
 export -f get_registered_image
@@ -154,13 +105,11 @@ export -f get_newest_version_of_apt_package
 export -f replace_version_env
 export -f replace_from_version
 export -f get_registered_base_image_version
-export -f get_number_of_updated_files
 export -f register_workspace_image
-export -f get_greater_version_of
-export -f get_greater_version
 
 ${BASE_DIR}/clone-repositories.sh
-${BASE_DIR}/get-updated-images.sh | tee ${UPDATED_IMAGES} && handle_error
+print_targets > ./js/version.json
+${BASE_DIR}/get-updated-images.sh from | tee ${UPDATED_IMAGES} && handle_error
 > ${REGISTERED_IMAGES}
 
 bash ${BASE_DIR}/images/workspace-base/update.sh

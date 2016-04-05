@@ -63,9 +63,10 @@ var findLatest = function*(imageName) {
 };
 
 co(function*() {
+  var from = process.argv.length > 2 && process.argv[2] === "from";
   for(var i = 0; i < images.length; i++) {
     var latest;
-    if(images[i].startsWith('xpfriend/')) {
+    if(from) {
       latest = yield findLatestFrom(images[i]);
     } else {
       latest = yield findLatest(images[i]);
