@@ -12,7 +12,7 @@ update_version() {
 }
 
 update_npm_version() {
-    LATEST=`curl -s https://registry.npmjs.com/$2/latest | sed -E 's/^.+,"version":"([^"]+).+/\1/'`
+    LATEST=`curl --compressed -s https://registry.npmjs.com/$2/latest | sed -E 's/^.+,"version":"([^"]+).+/\1/'`
     update_version $1 ${LATEST}
 }
 
