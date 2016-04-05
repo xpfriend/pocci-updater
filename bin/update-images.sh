@@ -6,7 +6,10 @@ export REGISTERED_IMAGES=${BASE_DIR}/registered-images.txt
 export UPDATED_IMAGES=${BASE_DIR}/updated-images.txt
 
 get_current_version() {
-    docker images | grep "xpfriend/$1" | head -1 | awk '{print $2}'
+    IMAGE=$1
+    cd ${BASE_DIR}/images/${IMAGE}/src.tmp
+    git describe --tags --abbrev=0 | tr -d v
+    cd ${BASE_DIR}
 }
 
 get_next_version() {
@@ -134,6 +137,12 @@ show_status() {
     done
 }
 
+handle_error() {
+    if [ ${PIPESTATUS[0]} -ne 0 ]; then
+        exit 1
+    fi
+}
+
 export -f get_next_version_of
 export -f get_current_version
 export -f get_next_version
@@ -151,7 +160,7 @@ export -f get_greater_version_of
 export -f get_greater_version
 
 ${BASE_DIR}/clone-repositories.sh
-${BASE_DIR}/get-updated-images.sh | tee ${UPDATED_IMAGES}
+${BASE_DIR}/get-updated-images.sh | tee ${UPDATED_IMAGES} && handle_error
 > ${REGISTERED_IMAGES}
 
 bash ${BASE_DIR}/images/workspace-base/update.sh
