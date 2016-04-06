@@ -64,6 +64,15 @@ handle_error() {
     fi
 }
 
+
+get_number_of_diff_lines() {
+    if [ `git branch | grep wip | wc -l` -eq 0 ]; then
+        echo 0
+    else
+        git diff master wip | wc -l
+    fi
+}
+
 export -f get_current_version
 export -f get_next_version_of
 export -f get_next_version

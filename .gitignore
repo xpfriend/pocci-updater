@@ -6,6 +6,7 @@ output.txt
 plugins.txt
 updated-images.txt
 registered-images.txt
+new-images.txt
 version.json
 *.tmp
 

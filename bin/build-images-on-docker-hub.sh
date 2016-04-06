@@ -72,3 +72,10 @@ build_image workspace-python27 ${WORKSPACE_PYTHON27_TOKEN}
 
 wait_for_build_completion workspace-nodejs
 build_image pocci-account-center ${POCCI_ACCOUNT_CENTER_TOKEN}
+
+wait_for_build_completion jenkins
+wait_for_build_completion fluentd
+wait_for_build_completion sonarqube
+wait_for_build_completion java
+wait_for_build_completion python27
+wait_for_build_completion pocci-account-center
