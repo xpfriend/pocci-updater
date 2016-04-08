@@ -18,6 +18,10 @@ for i in `cat ${REGISTERED_IMAGES} | tr -d "\r"`; do
         if [ `docker images |awk '{printf "%s:%s\n",$1,$2}' | grep $i | wc -l` -eq 0 ]; then
             DOCKER_FILE_DIR=$(dirname $(find ${BASE_DIR}/images/${IMAGE}/src.tmp -name Dockerfile))
             docker build -t xpfriend/$i ${DOCKER_FILE_DIR}
+            if [ -f ${BASE_DIR}/images/${IMAGE}/verify.sh ]; then
+                echo "Verify: ${IMAGE} image"
+                bash ${BASE_DIR}/images/${IMAGE}/verify.sh xpfriend/$i
+            fi
         fi
         git commit -am "Update software to the latest version"
         git tag "v${TAG}"
