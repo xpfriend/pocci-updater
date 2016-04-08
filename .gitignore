@@ -9,6 +9,7 @@ registered-images.txt
 new-images.txt
 version.json
 *.tmp
+log/
 
 backup/
 get-token.sh

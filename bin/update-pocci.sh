@@ -38,7 +38,7 @@ fi
 
 cd ${BASE_DIR}/pocci
 if [ -d ./src.tmp ]; then
-    rm -fr ./src.tmp
+    sudo rm -fr ./src.tmp
 fi
 git clone git@github.com:xpfriend/pocci.git src.tmp
 
