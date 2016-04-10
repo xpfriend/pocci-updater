@@ -59,6 +59,10 @@ for i in `find ${BASE_DIR}/pocci/src.tmp/template/services/ -name docker-compose
     update_docker_compose $i
 done
 
+for i in `ls ${BASE_DIR}/services/*/update.sh`; do
+    bash $i ${BASE_DIR}/pocci/src.tmp
+done
+
 cd ${BASE_DIR}/pocci/src.tmp
 git --no-pager diff --unified=0
 if [ `git status --porcelain |wc -l` -gt 0 ]; then
