@@ -40,6 +40,7 @@ execute update-images print_log
 execute build-images
 execute build-images-on-docker-hub
 execute update-pocci print_log
+execute check-broken-links print_log
 execute pull-new-images
 execute test-pocci
 echo ""
