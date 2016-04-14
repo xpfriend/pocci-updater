@@ -48,6 +48,7 @@ var findLatest = function*(imageName) {
         (result.name.indexOf('beta') == -1) &&
         (name !== 'library/java' || (result.name.startsWith('openjdk-8u') && result.name.endsWith('-jdk'))) &&
         (name !== 'library/nginx' || (!result.name.startsWith('1.8') && result.name.match(/^[0-9][0-9\.-]*$/))) &&
+        (name !== 'library/jenkins' || result.name.match(/^[0-9][0-9\.-]*$/)) &&
         result.id > maxId) {
       maxId = result.id;
       tag = result.name;
