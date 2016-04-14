@@ -12,4 +12,4 @@ if [ `get_number_of_diff_lines` -eq 0 ]; then
 fi
 
 cd ${POCCI_BASE_DIR}/test
-./test-private.sh
+./test-private.sh $1
