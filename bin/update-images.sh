@@ -8,7 +8,7 @@ export UPDATED_IMAGES=${BASE_DIR}/updated-images.txt
 source ${BASE_DIR}/util.sh
 
 get_from_version() {
-    grep $1 ${UPDATED_IMAGES} | head -1 | cut -d' ' -f3 | cut -d: -f2
+    grep "^xpfriend/$1" ${UPDATED_IMAGES} | head -1 | cut -d' ' -f3 | cut -d: -f2
 }
 
 register_image() {
@@ -16,7 +16,7 @@ register_image() {
 }
 
 get_registered_image() {
-    grep $1 ${REGISTERED_IMAGES} | head -1
+    grep "^$1" ${REGISTERED_IMAGES} | head -1
 }
 
 get_image_name_with_tag() {
