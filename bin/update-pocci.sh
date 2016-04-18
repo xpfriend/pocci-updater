@@ -67,6 +67,9 @@ cd ${BASE_DIR}/pocci/src.tmp
 git --no-pager diff --unified=0
 if [ `git status --porcelain |wc -l` -gt 0 ]; then
     git commit -am "Update software to the latest version"
+else
+    git checkout master
+    git branch -d wip
 fi
 cd ${BASE_DIR}
 
