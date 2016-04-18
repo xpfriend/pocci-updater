@@ -3,6 +3,37 @@ var server = require('co-request');
 var co = require('co');
 var images = require('./version.json')
 
+var getVersion = function(s) {
+    var version = [0, 0, 0, 0, 0, 0, 0, 0];
+    var index = 0;
+    for(var i = 0; i < s.length && index < version.length; i++) {
+        if(s[i].match(/[0-9]/)) {
+            version[index] = (version[index]*10) + parseInt(s[i]);
+        } else if(index > 0 || version[index] > 0) {
+            if(s[i] === '-') {
+                index++;
+            } else if(index%2 === 0) {
+                index += 2;
+            } else {
+                index++;
+            }
+        }
+    }
+    return version;
+};
+
+var getMaxVersion = function(aStr, bStr) {
+    var a = getVersion(aStr);
+    var b = getVersion(bStr);
+    for(var i = 0; i < a.length; i++) {
+        if(a[i] > b[i]) {
+            return aStr;
+        } else if(a[i] < b[i]) {
+            return bStr;
+        }
+    }
+    return aStr;
+};
 
 var findLatestFrom = function*(imageName) {
   var image = imageName.split(':');
@@ -40,18 +71,15 @@ var findLatest = function*(imageName) {
     results = results.concat(body.results);
     next = body.next;
   }
-  var maxId = 0;
-  var tag;
+  var tag = '';
   for(var i = 0; i < results.length; i++) {
     var result = results[i];
     if(result.name !== 'latest' && 
         (result.name.indexOf('beta') == -1) &&
         (name !== 'library/java' || (result.name.startsWith('openjdk-8u') && result.name.endsWith('-jdk'))) &&
         (name !== 'library/nginx' || (!result.name.startsWith('1.8') && result.name.match(/^[0-9][0-9\.-]*$/))) &&
-        (name !== 'library/jenkins' || result.name.match(/^[0-9][0-9\.-]*$/)) &&
-        result.id > maxId) {
-      maxId = result.id;
-      tag = result.name;
+        (name !== 'library/jenkins' || result.name.match(/^[0-9][0-9\.-]*$/))) {
+      tag = getMaxVersion(tag, result.name);
     }
   }
 
