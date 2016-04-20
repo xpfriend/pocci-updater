@@ -8,7 +8,7 @@ FROM_VERSION=`get_from_version ${IMAGE_NAME}`
 
 update_plugin_version() {
     PLUGIN_NAME=`echo $1 | cut -d: -f1`
-    LATEST=`curl -s https://updates.jenkins-ci.org/download/plugins/${PLUGIN_NAME}/ |grep -e '<a href' |grep -v latest |head -1 | sed -E 's/^.+<a href=.+>(.+)<\/a>.+$/\1/g'`
+    LATEST=`curl -s https://updates.jenkins.io/download/plugins/${PLUGIN_NAME}/ |grep -e '<a href' |grep -v latest |head -1 | sed -E 's/^.+<a href=.+>(.+)<\/a>.+$/\1/g'`
     echo "${PLUGIN_NAME}:${LATEST}" >>${PLUGINS_TXT}
 }
 
