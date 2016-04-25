@@ -35,6 +35,10 @@ if [ -d ${LOG_DIR} ]; then
 fi
 mkdir ${LOG_DIR}
 
+if [ -f ${BASE_DIR}/pocci/src.tmp/test/clean-containers.sh ]; then
+    ${BASE_DIR}/pocci/src.tmp/test/clean-containers.sh
+fi
+
 trap "on_exit" EXIT
 execute update-images print_log
 execute build-images
