@@ -47,5 +47,6 @@ execute update-pocci print_log
 execute check-broken-links print_log
 execute pull-new-images
 execute test-pocci
+execute release-pocci
 echo ""
 echo "Done."
