@@ -23,10 +23,19 @@ get_image_name_with_tag() {
     docker images | grep "xpfriend/$1" | head -1 | awk '{printf "%s:%s",$1,$2}'
 }
 
+get_newest_version_of_package() {
+    IMAGE=`get_image_name_with_tag $1`
+    docker run --rm -e PACKAGES="$2" -v ${PWD}:/app ${IMAGE} sh /app/checkupdate.tmp | grep '\---->' | sed 's/---->//g'
+}
+
 get_newest_version_of_apt_package() {
     cp ${BASE_DIR}/get-newest-version-of-apt-package.sh checkupdate.tmp
-    IMAGE=`get_image_name_with_tag $1`
-    docker run --rm -e PACKAGES="$2" -v ${PWD}:/app ${IMAGE} bash /app/checkupdate.tmp | grep '\---->' | sed 's/---->//g'
+    get_newest_version_of_package "$1" "$2"
+}
+
+get_newest_version_of_apk_package() {
+    cp ${BASE_DIR}/get-newest-version-of-apk-package.sh checkupdate.tmp
+    get_newest_version_of_package "$1" "$2"
 }
 
 replace_version_env() {
@@ -92,6 +101,7 @@ print_targets() {
     print_target workspace-python27 ","
     print_target pocci-account-center ","
     print_target fluentd ","
+    print_target postfix ","
     print_target jenkins ","
     print_target sonarqube
     echo "]"
@@ -101,7 +111,9 @@ export -f get_from_version
 export -f register_image
 export -f get_registered_image
 export -f get_image_name_with_tag
+export -f get_newest_version_of_package
 export -f get_newest_version_of_apt_package
+export -f get_newest_version_of_apk_package
 export -f replace_version_env
 export -f replace_from_version
 export -f get_registered_base_image_version
@@ -118,6 +130,7 @@ bash ${BASE_DIR}/images/workspace-nodejs/update.sh
 bash ${BASE_DIR}/images/workspace-python27/update.sh
 bash ${BASE_DIR}/images/pocci-account-center/update.sh
 bash ${BASE_DIR}/images/fluentd/update.sh
+bash ${BASE_DIR}/images/postfix/update.sh
 bash ${BASE_DIR}/images/jenkins/update.sh
 bash ${BASE_DIR}/images/sonarqube/update.sh
 

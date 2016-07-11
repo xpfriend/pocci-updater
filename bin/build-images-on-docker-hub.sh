@@ -63,6 +63,7 @@ wait_for_build_completion() {
 build_image workspace-base ${WORKSPACE_BASE_TOKEN}
 build_image jenkins ${JENKINS_TOKEN}
 build_image fluentd ${FLUENTD_TOKEN}
+build_image postfix ${POSTFIX_TOKEN}
 build_image sonarqube ${SONARQUBE_TOKEN}
 
 wait_for_build_completion workspace-base
@@ -75,6 +76,7 @@ build_image pocci-account-center ${POCCI_ACCOUNT_CENTER_TOKEN}
 
 wait_for_build_completion jenkins
 wait_for_build_completion fluentd
+wait_for_build_completion postfix
 wait_for_build_completion sonarqube
 wait_for_build_completion java
 wait_for_build_completion python27
