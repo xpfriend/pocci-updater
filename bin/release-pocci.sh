@@ -15,7 +15,7 @@ fi
 
 if [ `get_number_of_diff_lines` -eq 0 ]; then
     echo "Nothing to do"
-    exit 1
+    exit 0
 fi
 
 NUM_COMMITS=`git log --oneline master..wip | wc -l | sed 's/ //g'`
