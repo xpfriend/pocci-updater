@@ -46,16 +46,36 @@ cd src.tmp
 git checkout -b wip
 
 cd ${BASE_DIR}
-sed -e "s/^VERSION_WORKSPACE_BASE=.*$/VERSION_WORKSPACE_BASE=`get_current_version workspace-base`/" \
-    -e "s/^VERSION_WORKSPACE_JAVA=.*$/VERSION_WORKSPACE_JAVA=`get_current_version workspace-java`/" \
-    -e "s/^VERSION_WORKSPACE_NODEJS=.*$/VERSION_WORKSPACE_NODEJS=`get_current_version workspace-nodejs`/" \
+CURRENT_BASE_VERSION=`get_current_version workspace-base`
+CURRENT_JAVA_VERSION=`get_current_version workspace-java`
+CURRENT_NODEJS_VERSION=`get_current_version workspace-nodejs`
+
+sed -e "s/^VERSION_WORKSPACE_BASE=.*$/VERSION_WORKSPACE_BASE=${CURRENT_BASE_VERSION}/" \
+    -e "s/^VERSION_WORKSPACE_JAVA=.*$/VERSION_WORKSPACE_JAVA=${CURRENT_JAVA_VERSION}/" \
+    -e "s/^VERSION_WORKSPACE_NODEJS=.*$/VERSION_WORKSPACE_NODEJS=${CURRENT_NODEJS_VERSION}/" \
     -i ${BASE_DIR}/pocci/src.tmp/bin/lib/version
+
+sed -e "s|xpfriend/workspace-nodejs.*$|xpfriend/workspace-nodejs:${CURRENT_NODEJS_VERSION}|" \
+    -i ${BASE_DIR}/pocci/src.tmp/template/services/core/gitlab/runner/workspaces.yml.template
+
+sed -e "s|xpfriend/workspace-nodejs.*$|xpfriend/workspace-nodejs:${CURRENT_NODEJS_VERSION}|" \
+    -i ${BASE_DIR}/pocci/src.tmp/template/code/example/example-nodejs/.gitlab-ci.yml
+
+sed -e "s|xpfriend/workspace-java.*$|xpfriend/workspace-java:${CURRENT_JAVA_VERSION}|" \
+    -i ${BASE_DIR}/pocci/src.tmp/template/code/example/example-java/.gitlab-ci.yml
+
+sed -e "s|xpfriend/workspace-java.*$|xpfriend/workspace-java:${CURRENT_JAVA_VERSION}|" \
+    -i ${BASE_DIR}/pocci/src.tmp/document/gitlab-ci.ja.md
 
 update_new_images base
 update_new_images java
 update_new_images nodejs
 
 for i in `find ${BASE_DIR}/pocci/src.tmp/template/services/ -name docker-compose.yml.template`; do
+    update_docker_compose $i
+done
+
+for i in `find ${BASE_DIR}/pocci/src.tmp/template/services/ -name workspaces.yml.template`; do
     update_docker_compose $i
 done
 
