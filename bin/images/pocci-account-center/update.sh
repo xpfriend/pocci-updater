@@ -2,12 +2,14 @@
 set -e
 
 IMAGE_NAME=pocci-account-center
-DOCKER_FILE=`dirname $0`/src.tmp/docker/Dockerfile
+DOCKER_FILE=`dirname $0`/src.tmp/Dockerfile
+UPDATED_PACKAGES=`get_newest_version_of_apk_package ${IMAGE_NAME} "nodejs:NODEJS_VERSION"`
+FROM_VERSION=`get_from_version ${IMAGE_NAME}`
 
-REGISTERED_NODEJS_IMAGE=`get_registered_image workspace-nodejs`
-if [ -n "${REGISTERED_NODEJS_IMAGE}" ]; then
-    FROM_VERSION=`echo "${REGISTERED_NODEJS_IMAGE}" | cut -d: -f2`
-    replace_from_version ${DOCKER_FILE} ${FROM_VERSION}
+replace_version_env "${DOCKER_FILE}" "${UPDATED_PACKAGES}"
+replace_from_version "${DOCKER_FILE}" "${FROM_VERSION}"
+
+if [ `get_number_of_updated_files ${DOCKER_FILE}` -gt 0 ]; then
     NEXT_VERSION=`get_next_version_of ${IMAGE_NAME} p`
     register_image ${IMAGE_NAME} ${NEXT_VERSION}
 fi
