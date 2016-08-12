@@ -79,7 +79,7 @@ var findLatest = function*(imageName) {
         (name !== 'library/java' || (result.name.startsWith('openjdk-8u') && result.name.endsWith('-jdk'))) &&
         (name !== 'library/nginx' || (!result.name.startsWith('1.8') && result.name.match(/^[0-9][0-9\.-]*$/))) &&
         (name !== 'gitlab/gitlab-runner' || result.name.startsWith('alpine-')) &&
-        (name !== 'library/jenkins' || result.name.match(/^1\.[0-9\.-]*$/))) {
+        (name !== 'library/jenkins' || result.name.endsWith('-alpine'))) {
       tag = getMaxVersion(tag, result.name);
     }
   }

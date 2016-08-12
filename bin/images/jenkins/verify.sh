@@ -9,7 +9,7 @@ PLUGINS_TXT_DIFF=/tmp/${NAME}.diff
 
 cat ${BASE_DIR}/src.tmp/config/plugins.txt | cut -d: -f1 | sort > ${PLUGINS_TXT_OLD}
 
-docker run -d -p 8080:8080 --name ${NAME} $1
+docker run -d -e JAVA_OPTS="-Djenkins.install.runSetupWizard=false" -p 8080:8080 --name ${NAME} $1
 
 trap "docker rm -v -f ${NAME} > /dev/null 2>&1; rm /tmp/${NAME}.*" EXIT
 
