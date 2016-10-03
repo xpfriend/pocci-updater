@@ -66,6 +66,8 @@ build_image fluentd ${FLUENTD_TOKEN}
 build_image postfix ${POSTFIX_TOKEN}
 build_image sonarqube ${SONARQUBE_TOKEN}
 build_image pocci-account-center ${POCCI_ACCOUNT_CENTER_TOKEN}
+build_image taiga-back ${TAIGA_BACK_TOKEN}
+build_image taiga-front ${TAIGA_FRONT_TOKEN}
 
 wait_for_build_completion workspace-base
 build_image workspace-nodejs ${WORKSPACE_NODEJS_TOKEN}
@@ -77,6 +79,8 @@ wait_for_build_completion jenkins
 wait_for_build_completion fluentd
 wait_for_build_completion postfix
 wait_for_build_completion sonarqube
+wait_for_build_completion taiga-back
+wait_for_build_completion taiga-front
 wait_for_build_completion java
 wait_for_build_completion python27
 wait_for_build_completion workspace-nodejs

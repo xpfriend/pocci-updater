@@ -103,6 +103,8 @@ print_targets() {
     print_target fluentd ","
     print_target postfix ","
     print_target jenkins ","
+    print_target taiga-back ","
+    print_target taiga-front ","
     print_target sonarqube
     echo "]"
 }
@@ -133,5 +135,7 @@ bash ${BASE_DIR}/images/fluentd/update.sh
 bash ${BASE_DIR}/images/postfix/update.sh
 bash ${BASE_DIR}/images/jenkins/update.sh
 bash ${BASE_DIR}/images/sonarqube/update.sh
+bash ${BASE_DIR}/images/taiga-back/update.sh
+bash ${BASE_DIR}/images/taiga-front/update.sh
 
 show_status
