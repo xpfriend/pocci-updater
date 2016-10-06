@@ -4,19 +4,16 @@ var co = require('co');
 var images = require('./version.json')
 
 var getVersion = function(s) {
-    var version = [0, 0, 0, 0, 0, 0, 0, 0];
+    var version = [-1, -1, -1, -1, -1, -1, -1, -1];
     var index = 0;
     for(var i = 0; i < s.length && index < version.length; i++) {
-        if(s[i].match(/[0-9]/)) {
-            version[index] = (version[index]*10) + parseInt(s[i]);
-        } else if(index > 0 || version[index] > 0) {
-            if(s[i] === '-') {
-                index++;
-            } else if(index%2 === 0) {
-                index += 2;
-            } else {
-                index++;
+        if(s[i].match(/[0-9]/) !== null) {
+            if(version[index] == -1) {
+                version[index] = 0;
             }
+            version[index] = (version[index]*10) + parseInt(s[i]);
+        } else if(version[index] > -1) {
+            index++;
         }
     }
     return version;
@@ -75,11 +72,11 @@ var findLatest = function*(imageName) {
   for(var i = 0; i < results.length; i++) {
     var result = results[i];
     if(result.name !== 'latest' && 
-        (result.name.indexOf('beta') == -1) &&
+        (result.name.indexOf('beta') === -1) &&
         (name !== 'library/python' || (result.name.startsWith('3.5') && result.name.endsWith('-alpine'))) &&
         (name !== 'library/java' || (result.name.startsWith('openjdk-8u') && result.name.endsWith('-jdk'))) &&
         (name !== 'library/nginx' || result.name.endsWith('-alpine')) &&
-        (name !== 'gitlab/gitlab-runner' || result.name.startsWith('alpine-')) &&
+        (name !== 'gitlab/gitlab-runner' || (result.name.startsWith('alpine-') && result.name.indexOf('-rc.') === -1)) &&
         (name !== 'library/jenkins' || result.name.endsWith('-alpine'))) {
       tag = getMaxVersion(tag, result.name);
     }
