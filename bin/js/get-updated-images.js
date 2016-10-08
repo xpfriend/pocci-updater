@@ -74,7 +74,7 @@ var findLatest = function*(imageName) {
     if(result.name !== 'latest' && 
         (result.name.indexOf('beta') === -1) &&
         (name !== 'library/python' || (result.name.startsWith('3.5') && result.name.endsWith('-alpine'))) &&
-        (name !== 'library/java' || (result.name.startsWith('openjdk-8u') && result.name.endsWith('-jdk'))) &&
+        (name !== 'library/openjdk' || (result.name.startsWith('8u') && result.name.endsWith('-jdk'))) &&
         (name !== 'library/nginx' || result.name.endsWith('-alpine')) &&
         (name !== 'gitlab/gitlab-runner' || (result.name.startsWith('alpine-') && result.name.indexOf('-rc.') === -1)) &&
         (name !== 'library/jenkins' || result.name.endsWith('-alpine'))) {
