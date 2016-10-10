@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+TAIGA_BRANCH=stable
+
 IMAGE_NAME=taiga-front
 DOCKER_FILE=`dirname $0`/src.tmp/Dockerfile
 UPDATED_PACKAGES=`get_newest_version_of_apk_package ${IMAGE_NAME} "git:GIT_VERSION"`
@@ -12,6 +14,17 @@ update_dist() {
     fi
     git clone https://github.com/xpfriend/taiga-front-dist.git taiga-front-dist.tmp
     cd taiga-front-dist.tmp
+
+    git checkout stable
+    git remote add upstream https://github.com/taigaio/taiga-front-dist.git
+    git pull upstream stable
+    git push origin stable
+
+    if [ "${TAIGA_BRANCH}" = "stable" ]; then
+      LAST_COMMIT=`git log -1 --pretty=format:"%s"`
+      return
+    fi
+
     git checkout pocci
     CURRENT_COMMIT=`git log -1 --pretty=format:"%s"`
 
@@ -38,7 +51,7 @@ update_dist() {
 
 update_dist
 
-replace_version_env "${DOCKER_FILE}" "TAIGA_FRONT_VERSION:${LAST_COMMIT}"
+replace_version_env "${DOCKER_FILE}" "TAIGA_BRANCH:${TAIGA_BRANCH} TAIGA_FRONT_VERSION:${LAST_COMMIT}"
 replace_version_env "${DOCKER_FILE}" "${UPDATED_PACKAGES}"
 replace_from_version "${DOCKER_FILE}" "${FROM_VERSION}"
 
