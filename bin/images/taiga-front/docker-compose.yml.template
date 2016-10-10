@@ -1,0 +1,41 @@
+cat << EOF
+version: '2'
+services:
+  taigadb:
+    image: sameersbn/postgresql:${POSTGRESQL_VERSION}
+    environment:
+      - DB_NAME=taiga
+      - DB_USER=taiga
+      - DB_PASS=password
+
+  taigaback:
+    image: xpfriend/taiga-back:${TAIGA_BACK_VERSION}
+    environment:
+      - DEBUG=True
+      - TAIGA_URL=http://localhost
+      - TAIGA_PROTOCOL="http:"
+      - TAIGA_HOST=localhost
+      - TAIGA_PORT=80
+      - TAIGA_MAIL_ADDRESS=pocci@localhost.localdomain
+      - TAIGA_SMTP_HOST=localhost
+      - TAIGA_SMTP_PORT=25
+      - TAIGA_DB_NAME=taiga
+      - TAIGA_DB_USER=taiga
+      - TAIGA_DB_PASS=password
+      - TAIGA_SECRET_KEY=12345678
+    links:
+      - taigadb:postgres
+
+  taiga:
+    image: ${TAIGA_FRONT_IMAGE}
+    hostname: localhost
+    environment:
+      - DEBUG=true
+    links:
+      - taigaback:taigaback
+    volumes_from:
+      - taigaback
+    ports:
+      - "80:80"
+
+EOF

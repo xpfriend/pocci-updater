@@ -12,7 +12,7 @@ update_dist() {
     if [ -d taiga-front-dist.tmp ]; then
         rm -fr taiga-front-dist.tmp
     fi
-    git clone https://github.com/xpfriend/taiga-front-dist.git taiga-front-dist.tmp
+    git clone git@github.com:xpfriend/taiga-front-dist.git taiga-front-dist.tmp
     cd taiga-front-dist.tmp
 
     git checkout stable

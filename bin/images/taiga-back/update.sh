@@ -5,7 +5,7 @@ update_taiga_back() {
     if [ -d taiga-back.tmp ]; then
         rm -fr taiga-back.tmp
     fi
-    git clone https://github.com/xpfriend/taiga-back.git taiga-back.tmp
+    git clone git@github.com:xpfriend/taiga-back.git taiga-back.tmp
     cd taiga-back.tmp
     git checkout stable
     CURRENT_COMMIT=`git log -1 --pretty=format:"%H"`
