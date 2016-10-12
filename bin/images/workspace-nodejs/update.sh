@@ -34,5 +34,6 @@ update_npm_version BOWER_VERSION bower
 update_npm_version GRUNT_VERSION grunt-cli
 update_npm_version GULP_VERSION gulp
 update_npm_version YO_VERSION yo
+update_npm_version YARN_VERSION yarn
 
 register_workspace_image ${DOCKER_FILE} ${IMAGE_NAME}
