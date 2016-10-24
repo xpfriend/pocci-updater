@@ -10,6 +10,7 @@ new-images.txt
 version.json
 *.tmp
 log/
+*.out
 
 backup/
 get-token.sh
