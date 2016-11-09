@@ -16,7 +16,7 @@ for i in `cat ${NEW_IMAGES} | sort | uniq`; do
     docker pull $i
 done
 
-LATESTS=`docker images |grep latest |awk '{printf "%s:%s ",$1,$2}'`
+LATESTS=`docker images |grep latest |grep -v poccis_ |awk '{printf "%s:%s ",$1,$2}'`
 if [ -n "${LATESTS}" ]; then
     docker rmi ${LATESTS}
 fi
