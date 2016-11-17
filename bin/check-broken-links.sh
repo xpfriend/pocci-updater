@@ -11,6 +11,7 @@ check_links() {
           grep -E -e "^http://[^\.]+" -e "^https://[^\.]+" -e "^ftp://[^\.]+" |
           grep -v "example.com" |
           grep -v "localdomain" |
+          grep -v "localhost" |
           grep -E -v "\.test$|\.test/" |
           sort | uniq`; do
         curl -s -f $i > /dev/null
