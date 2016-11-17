@@ -9,7 +9,7 @@ services:
       - DB_PASS=password
 
   taigaback:
-    image: xpfriend/taiga-back:${TAIGA_BACK_VERSION}
+    image: ${TAIGA_BACK_IMAGE}
     environment:
       - DEBUG=True
       - TAIGA_URL=http://localhost

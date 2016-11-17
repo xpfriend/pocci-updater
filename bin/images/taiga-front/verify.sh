@@ -4,8 +4,13 @@ set -e
 SCRIPT_DIR=$(cd $(dirname $0); pwd)
 
 TAIGA_FRONT_IMAGE="$1"
+TAIGA_BACK_IMAGE="$2"
 POSTGRESQL_VERSION=`docker images |grep sameersbn/postgresql | awk '{print $2}' | grep -v latest | sort -r | head -1`
-TAIGA_BACK_VERSION=`cd ${SCRIPT_DIR}/../taiga-back/src.tmp && git describe --abbrev=1 --tags | sed s/v//`
+
+if [ -z "${TAIGA_BACK_IMAGE}" ]; then
+    TAIGA_BACK_VERSION=`cd ${SCRIPT_DIR}/../taiga-back/src.tmp && git describe --abbrev=1 --tags | sed s/v//`
+    TAIGA_BACK_IMAGE="xpfriend/taiga-back:${TAIGA_BACK_VERSION}"
+fi
 
 source ${SCRIPT_DIR}/docker-compose.yml.template > ${SCRIPT_DIR}/docker-compose.yml.tmp
 docker-compose -f ${SCRIPT_DIR}/docker-compose.yml.tmp up -d
