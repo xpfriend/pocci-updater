@@ -3,7 +3,6 @@ set -e
 
 IMAGE_NAME=sonarqube
 DOCKER_FILE=`dirname $0`/src.tmp/Dockerfile
-UPDATED_PACKAGES=`get_newest_version_of_apt_package ${IMAGE_NAME} "sonar:SONARQUBE_VERSION"`
 FROM_VERSION=`get_from_version ${IMAGE_NAME}`
 
 get_latest_gitlab_plugin_version() {
@@ -20,9 +19,23 @@ update_gitlab_plugin_version() {
     replace_version_env "${DOCKER_FILE}" "SONAR_GITLAB_PLUGIN:${LATEST}"
 }
 
-get_latest_plugin_version() {
+get_latest_plugin_url() {
     PLUGIN_NAME=$1
-    VERSIONS=`curl -s https://sonarsource.bintray.com/Distribution/${PLUGIN_NAME}/ | grep -v '.jar.asc' | grep "${PLUGIN_NAME}-" | sed -E "s/^.+<a .+=.+>${PLUGIN_NAME}-(.+)\.jar<\/a>.+$/\1/g"`
+    VERSIONS=`curl -s https://update.sonarsource.org/update-center.properties | grep ${PLUGIN_NAME} | grep downloadUrl | sed -E "s/^${PLUGIN_NAME}\.(.+)\.downloadUrl=.+$/\1/g"`
+    LATEST=0
+    for i in ${VERSIONS}; do
+        LATEST=`get_greater_version "$i" "${LATEST}"`
+    done
+    curl -s https://update.sonarsource.org/update-center.properties | grep ${PLUGIN_NAME}.${LATEST}.downloadUrl | sed -E "s/^${PLUGIN_NAME}.${LATEST}.downloadUrl=(.+)$/\1/" | sed 's/\\//g'
+}
+
+update_plugin_url() {
+    LATEST=`get_latest_plugin_url $1`
+    sed -i "s|^ENV $2.*|ENV $2 ${LATEST}|" ${DOCKER_FILE}
+}
+
+get_latest_sonar_version() {
+    VERSIONS=`curl -s https://sonarsource.bintray.com/Distribution/sonarqube/ | grep -v '.zip.md5' | grep -v '.zip.sha' | grep -v '.zip.asc' | grep "sonarqube-" | grep -v "\-RC" | sed -E "s/^.+<a .+=.+>sonarqube-(.+)\.zip<\/a>.+$/\1/g"`
     LATEST=0
     for i in ${VERSIONS}; do
         LATEST=`get_greater_version "$i" "${LATEST}"`
@@ -30,18 +43,12 @@ get_latest_plugin_version() {
     echo ${LATEST}
 }
 
-update_plugin_version() {
-    PLUGIN_NAME=`echo $1 | cut -d: -f1`
-    LATEST=`get_latest_plugin_version $1`
-    replace_version_env "${DOCKER_FILE}" "$2:${LATEST}"
-}
-
-update_plugin_version sonar-ldap-plugin SONAR_LDAP_PLUGIN
-update_plugin_version sonar-javascript-plugin SONAR_JAVASCRIPT_PLUGIN
-update_plugin_version sonar-findbugs-plugin SONAR_FINDBUGS_PLUGIN
+update_plugin_url ldap SONAR_LDAP_PLUGIN_URL
+update_plugin_url javascript SONAR_JAVASCRIPT_PLUGIN_URL
+update_plugin_url findbugs SONAR_FINDBUGS_PLUGIN_URL
 update_gitlab_plugin_version
 
-replace_version_env "${DOCKER_FILE}" "${UPDATED_PACKAGES}"
+replace_version_env "${DOCKER_FILE}" "SONARQUBE_VERSION:`get_latest_sonar_version`"
 replace_from_version "${DOCKER_FILE}" "${FROM_VERSION}"
 
 if [ `get_number_of_updated_files ${DOCKER_FILE}` -gt 0 ]; then
