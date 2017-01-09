@@ -10,7 +10,8 @@ update_docker_compose() {
     echo $1
     grep -E ' +image *:' $1 | sed -E 's/ +image *: *(.+)/"\1"/g' | \
       awk 'BEGIN{printf "["}NR>1{printf ", "}{print $0}END{printf "]\n"}' > ${BASE_DIR}/js/version.json
-    for i in `${BASE_DIR}/get-updated-images.sh | sed -E -e 's/^.* --> //g'`; do
+    UPDATED_IMAGES=`${BASE_DIR}/get-updated-images.sh`
+    for i in `echo ${UPDATED_IMAGES} | sed -E -e 's/^.* --> //g'`; do
       IMAGE_FULL=`echo $i | cut -d: -f1`
       IMAGE=`echo ${IMAGE_FULL} | sed -E -e 's|^library/||g'`
       TAG=`echo $i | cut -d: -f2`
