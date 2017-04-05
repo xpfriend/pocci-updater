@@ -6,6 +6,10 @@ NEW_IMAGES=${BASE_DIR}/new-images.txt
 
 
 ${BASE_DIR}/pocci/src.tmp/test/clean-containers.sh
+RUNNERS=`docker ps -a |grep runner- |awk '{print $1}'`
+if [ -n "$RUNNERS" ]; then
+    docker rm -v $RUNNERS
+fi
 
 for i in `cat ${NEW_IMAGES} | sort | uniq`; do
     NAME=`echo $i | cut -d: -f1`
