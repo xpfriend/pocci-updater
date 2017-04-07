@@ -73,6 +73,7 @@ var findLatest = function*(imageName) {
     var result = results[i];
     if(result.name !== 'latest' && 
         (result.name.indexOf('beta') === -1) &&
+        (name !== 'jenkinsci/blueocean' || (result.name.indexOf('-b') === -1 && result.name.indexOf('-rc') === -1)) &&
         (name !== 'library/python' || (result.name.startsWith('3.5') && result.name.endsWith('-alpine'))) &&
         (name !== 'library/openjdk' || (result.name.startsWith('8u') && result.name.endsWith('-jdk'))) &&
         (name !== 'library/nginx' || result.name.endsWith('-alpine')) &&
