@@ -19,12 +19,8 @@ for i in {1..60}; do
         sed -E -e 's/data-plugin-id=//g' -e 's/"//g' | grep -v jenkins-core | \
         sort | uniq > ${PLUGINS_TXT_NEW}
     if [ `cat ${PLUGINS_TXT_NEW} | wc -l` -gt 0 ]; then
-        diff ${PLUGINS_TXT_OLD} ${PLUGINS_TXT_NEW} | tee ${PLUGINS_TXT_DIFF}
-        if [ `cat ${PLUGINS_TXT_DIFF} | wc -l` -gt 0 ]; then
-          exit 1
-        else
-          exit 0
-        fi
+        cat ${PLUGINS_TXT_NEW}
+        exit 0
     fi
     echo -n "."
     sleep 2
